@@ -24,7 +24,7 @@ def get_img_from_fig(fig, dpi=180, pad_inches=0):
 
 def get_skeleton_lines(x, y, z):
     """
-    From DHP19 toolbox
+    Get the lines of the skeleton graph
     """
     # rename joints to identify name and axis
     x_head, x_shoulderR, x_shoulderL, x_elbowR = x[0], x[1], x[2], x[3]
@@ -131,7 +131,7 @@ def get_skeleton_lines(x, y, z):
 
 def get_2d_skeleton_lines(x, y):
     """
-    From DHP19 toolbox
+    Get 2D skeleton lines from 3D skeleton lines
     """
     # rename joints to identify name and axis
     x_head, x_shoulderR, x_shoulderL, x_elbowR = x[0], x[1], x[2], x[3]
@@ -222,6 +222,9 @@ def get_2d_skeleton_lines(x, y):
 
 
 def plot_2d_dots(joints, ax=None, plot_lines=False, c="red", label=None):
+    """
+    Plot 2D joints
+    """
     x = joints[:, 0]
     y = joints[:, 1]
     if ax is None:
@@ -261,6 +264,21 @@ def plot_skeleton_2d(dvs_frame, gt_joints, pred_joints=None, plot_lines=False, r
 
 
 def plot_2d_overlay(gt_pose, intrinsic_matrix, extrinsic_matrix, image, frame_size, pred_pose=None, plot_lines=False, ret_fig=False, show=True, gt_label='GT', pred_label='Prediction'):
+    """
+        To plot image and 2D ground truth and prediction
+    Args:
+        gt_pose: gt joints as vector (N_jointsx2)
+        intrinsic_matrix: intrinsic matrix of the camera
+        extrinsic_matrix: extrinsic matrix of the camera
+        image: image to plot
+        frame_size: size of the frame
+        pred_pose: prediction joints as vector (N_jointsx2)
+        plot_lines: whether to plot the lines of the skeleton
+        ret_fig: whether to return the figure
+        show: whether to show the figure
+        gt_label: label of the ground truth
+        pred_label: label of the prediction
+    """
     h, w = frame_size
 
     def process_pose_to_joints(pose):
@@ -287,6 +305,8 @@ def plot_2d_overlay(gt_pose, intrinsic_matrix, extrinsic_matrix, image, frame_si
 
 
 def get_3d_ax(ret_fig=False):
+    """Get 3D axis with no grid and no background
+    """
     fig = plt.figure(figsize=(8, 8))
     # ax = Axes3D(fig)
     ax = Axes3D(fig, auto_add_to_figure=False)
@@ -414,49 +434,6 @@ def plot_2d_from_3d(dvs_frame, gt_skeleton, p_mat, pred_skeleton=None):
         ax.plot(pred_joints[:, 0], pred_joints[:, 1], '.', c='blue', label='pred')
 
     plt.legend()
-
-
-# def plot_skeleton_2d(dvs_frame, gt_joints, pred_joints=None):
-#     """
-#         To plot image and 2D ground truth and prediction
-
-#         Args:
-#           dvs_frame: frame as vector (1xWxH)
-#           sample_gt: gt joints as vector (N_jointsx2)
-
-#         """
-
-#     fig = plt.figure()
-#     ax = fig.add_axes([0, 0, 1, 1])
-#     ax.imshow(dvs_frame)
-#     ax.axis('off')
-#     # H, W = dvs_frame.shape
-#     ax.plot(gt_joints[:, 0], gt_joints[:, 1], '.', c='red')
-#     if pred_joints is not None:
-#         ax.plot(pred_joints[:, 0], pred_joints[:, 1], '.', c='blue')
-#         plt.legend(['GT', 'Prediction'])
-
-
-# def plot_2d_overlay(gt_pose, intrinsic_matrix, extrinsic_matrix, image, frame_size, pred_pose=None):
-#     h, w = frame_size
-
-#     def process_pose_to_joints(pose):
-#         sk = Skeleton(pose)
-#         joints_2d = torch.tensor(sk.get_2d_points(
-#             w,
-#             h,
-#             extrinsic_matrix=extrinsic_matrix,
-#             intrinsic_matrix=intrinsic_matrix,
-#         ))
-#         joints = torch.stack([joints_2d[:, 0], joints_2d[:, 1]], 1)
-#         return joints
-
-#     gt_joints = process_pose_to_joints(gt_pose)
-#     if pred_pose is not None:
-#         pred_joints = process_pose_to_joints(pred_pose)
-#         plot_skeleton_2d(image, gt_joints=gt_joints, pred_joints=pred_joints)
-#     else:
-#         plot_skeleton_2d(image, gt_joints)
 
 
 def batch_show(imgs, sub_titles=None, title=None, row_labels=None,
